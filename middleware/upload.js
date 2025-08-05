@@ -2,13 +2,11 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Create uploads/resumes folder if not exists
 const resumeDir = path.join(__dirname, '../uploads/resumes');
 if (!fs.existsSync(resumeDir)) {
   fs.mkdirSync(resumeDir, { recursive: true });
 }
 
-// Multer storage config
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, resumeDir);
@@ -19,7 +17,6 @@ const storage = multer.diskStorage({
   }
 });
 
-// File filter: only PDF, DOC, DOCX
 const fileFilter = (req, file, cb) => {
   const allowedTypes = /pdf|doc|docx/;
   const extName = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -32,11 +29,10 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-// Initialize multer
 const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 } // Max 5MB
+  limits: { fileSize: 5 * 1024 * 1024 } 
 });
 
 module.exports = upload;
