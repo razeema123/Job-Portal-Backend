@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Job = require('../models/Job');
-const upload = require('../middlewares/upload');
+const upload = require('../middleware/upload');
 
 
 router.post('/create', async (req, res) => {
