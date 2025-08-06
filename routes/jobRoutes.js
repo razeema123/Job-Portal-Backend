@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const Job = require('../models/Job');
 const upload = require('../middleware/upload');
+const { verifyToken, authorizeRoles } = require("../middleware/auths");
 
 
 router.post('/create', async (req, res) => {
@@ -177,4 +178,7 @@ router.post('/apply/:jobId', upload.single('resume'), async (req, res) => {
   }
 });
 
+router.post("/create", verifyToken, authorizeRoles("recruiter", "admin"), (req, res) => {
+  res.json({ message: "Job created!" });
+});
 module.exports = router;
