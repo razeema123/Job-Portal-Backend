@@ -176,5 +176,26 @@ router.post('/apply/:jobId', upload.single('resume'), async (req, res) => {
     res.status(500).json({ error: 'Server error while uploading resume' });
   }
 });
+// ✅ Bulk delete jobs by IDs
+router.post('/delete-multiple', async (req, res) => {
+  try {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ error: 'No job IDs provided' });
+    }
+
+    const result = await Job.deleteMany({ _id: { $in: ids } });
+
+    res.status(200).json({
+      message: `${result.deletedCount} job(s) deleted successfully`,
+      deletedCount: result.deletedCount
+    });
+  } catch (err) {
+    console.error('Error deleting multiple jobs:', err.message);
+    res.status(500).json({ error: 'Failed to delete multiple jobs' });
+  }
+});
+
 
 module.exports = router;
