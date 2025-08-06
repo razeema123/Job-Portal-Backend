@@ -11,11 +11,6 @@ exports.signupSchema = Joi.object({
   password: Joi.string().min(6).required().messages({
     "string.empty": "Password is required",
     "string.min": "Password must be at least 6 characters"
-  }),
-  age: Joi.number().integer().min(0).required().messages({
-    "number.base": "Age must be a number",
-    "number.min": "Age cannot be negative",
-    "any.required": "Age is required"
   })
 });
 
