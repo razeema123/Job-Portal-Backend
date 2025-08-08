@@ -14,12 +14,12 @@ const applicationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  resumeLink: {
+  resumepath: {
     type: String,
   },
   status: {
     type: String,
-    enum: ['applied', 'reviewed', 'interview', 'rejected', 'selected'],
+    enum: ['applied', 'pending', 'interview', 'rejected', 'selected'],
     default: 'applied',
   },
 }, { timestamps: true });
