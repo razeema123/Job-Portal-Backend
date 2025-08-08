@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Job = require('../models/Job');
+const Job = require('../models/job');
 const upload = require('../middleware/upload');
 const { verifyToken, authorizeRoles } = require("../middleware/auths");
 
@@ -104,6 +104,7 @@ router.delete('/delete/:id', async (req, res) => {
     res.status(400).json({ error: 'Invalid Job ID' });
   }
 });
+
 
 module.exports = router;
 // ✅ Get All Jobs with Filters and Pagination
