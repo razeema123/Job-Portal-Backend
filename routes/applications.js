@@ -46,10 +46,11 @@ router.post('/:jobId/apply', upload.single('resume'), async (req, res) => {
 });
 
 
-// 📌 Get All Applications
+// 📌 Get All Applications (with company & post)
 router.get('/', async (req, res) => {
   try {
-    const apps = await Application.find();
+    const apps = await Application.find()
+      .populate('jobId', 'title company'); // Get job title & company from Job model
     res.json(apps);
   } catch (err) {
     res.status(500).json({ error: 'Failed to get applications' });
@@ -59,17 +60,19 @@ router.get('/', async (req, res) => {
 // 📌 Get applications by job ID
 router.get('/job/:jobId', async (req, res) => {
   try {
-    const apps = await Application.find({ jobId: req.params.jobId });
+    const apps = await Application.find({ jobId: req.params.jobId })
+      .populate('jobId', 'title company');
     res.json(apps);
   } catch (err) {
     res.status(500).json({ error: 'Failed to get applications by job' });
   }
 });
 
-// 📌 Get single application by ID
+// 📌 Get single application by ID (with company & post)
 router.get('/:id', async (req, res) => {
   try {
-    const app = await Application.findById(req.params.id);
+    const app = await Application.findById(req.params.id)
+      .populate('jobId', 'title company');
     if (!app) return res.status(404).json({ error: 'Not found' });
     res.json(app);
   } catch (err) {
@@ -108,5 +111,7 @@ router.delete('/:id', async (req, res) => {
     res.status(500).json({ error: 'Delete failed' });
   }
 });
+
+
 
 module.exports = router;
