@@ -24,19 +24,46 @@ const upload = multer({ storage });
 
 /* -------------------- PROFILE ROUTES (MUST BE ABOVE :id ROUTES) -------------------- */
 
+
+      const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+   
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
+
 // GET logged-in user's profile
 router.get("/profile", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ error: "Profile not found" });
     res.json(user);
+
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
 });
 
+
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
 // UPDATE logged-in user's profile
 router.put("/profile", verifyToken, validate(userSchema), async (req, res) => {
+
   try {
     const updatedUser = await User.findByIdAndUpdate(
       req.user.id,
@@ -50,6 +77,7 @@ router.put("/profile", verifyToken, validate(userSchema), async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+
 
 // UPLOAD resume for logged-in user
 router.post(
@@ -80,7 +108,7 @@ router.post(
 
 /* -------------------- USER ID BASED ROUTES -------------------- */
 
-// GET user by ID
+
 router.get("/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -95,7 +123,7 @@ router.get("/:id", verifyToken, async (req, res) => {
   }
 });
 
-// UPDATE user by ID
+
 router.put("/:id", verifyToken, validate(userSchema), async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -114,7 +142,7 @@ router.put("/:id", verifyToken, validate(userSchema), async (req, res) => {
   }
 });
 
-// DELETE user by ID
+
 router.delete("/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
