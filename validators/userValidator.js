@@ -1,5 +1,6 @@
 const Joi = require("joi");
 
+// Signup Validation
 exports.signupSchema = Joi.object({
   name: Joi.string().trim().required().messages({
     "string.empty": "Name is required"
@@ -14,6 +15,7 @@ exports.signupSchema = Joi.object({
   })
 });
 
+// Login Validation
 exports.loginSchema = Joi.object({
   email: Joi.string().email().required().messages({
     "string.empty": "Email is required",
@@ -23,3 +25,21 @@ exports.loginSchema = Joi.object({
     "string.empty": "Password is required"
   })
 });
+
+// Profile Save Validation
+exports.userSchema = Joi.object({
+  name: Joi.string().trim().required().messages({
+    "string.empty": "Name is required"
+  }),
+  title: Joi.string().allow(""),
+  email: Joi.string().email().required().messages({
+    "string.empty": "Email is required",
+    "string.email": "Invalid email"
+  }),
+  phone: Joi.string().allow(""),
+  education: Joi.string().allow(""),
+  experience: Joi.string().allow(""),
+  skills: Joi.array().items(Joi.string()).allow(null),
+  about: Joi.string().allow(""),
+  resumePath: Joi.string().allow("")
+}).unknown(true); 
