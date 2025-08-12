@@ -19,13 +19,30 @@ router.post("/signup", validate(userSchema), async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await User.create({ name, email, password: hashedPassword, role });
 
-    res.status(201).json({ message: "User registered" });
+      const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+   
+    res.status(201).json({
+      message: "User registered successfully",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// ✅ Login
+
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -45,7 +62,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// ✅ Get user by ID (self or admin only)
+// Get user by ID (self or admin only)
 router.get("/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
 
@@ -67,7 +84,7 @@ router.get("/:id", verifyToken, async (req, res) => {
   }
 });
 
-// ✅ Update user (self or admin only)
+
 router.put("/:id", verifyToken, validate(userSchema), async (req, res) => {
   const { id } = req.params;
 
@@ -93,7 +110,7 @@ router.put("/:id", verifyToken, validate(userSchema), async (req, res) => {
   }
 });
 
-// ✅ Delete user (self or admin only)
+
 router.delete("/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
 
