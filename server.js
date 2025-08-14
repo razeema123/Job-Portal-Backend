@@ -10,6 +10,7 @@ const jobRoutes = require('./routes/jobRoutes');
 const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./auth/authRoutes");
 const applications = require('./routes/applications'); // ✅ Use only this one
+const notificationRoutes = require("./routes/notificationRoutes");
 
 const app = express(); 
 const PORT = process.env.PORT || 5002;
@@ -19,6 +20,8 @@ app.use(express.json());
 
 app.use('/api/jobs', jobRoutes);
 app.use('/api/applications', applications); // ✅ Use once only
+app.use("/api/notifications", notificationRoutes);
+
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/users", userRoutes);     
@@ -35,9 +38,14 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('MongoDB connection error:', err.message);
   });
 
-app.get('/', (req, res) => res.send('Job Application API'));
+app.get('/', (_req, res) => res.send('Job Application API'));
 
-app.use((err, req, res, next) => {
+app.use((err, _req, res, _next) => {
   console.error('Global Error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
 });
+app.use((err, _req, res, _next) => {
+  console.error("Global Error:", err);
+  res.status(500).json({ error: err.message, stack: err.stack });
+});
+
