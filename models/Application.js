@@ -6,6 +6,7 @@ const applicationSchema = new mongoose.Schema({
     required: true,
     ref: 'Job',
   },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   name: {
     type: String,
     required: true,
@@ -14,12 +15,12 @@ const applicationSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  resumepath: {
+  resumePath: {
     type: String,
   },
   status: {
     type: String,
-    enum: ['applied', 'pending', 'interview', 'rejected', 'selected'],
+    enum: ['applied', 'pending', 'reviewed', 'shortlisted', 'interview', 'rejected', 'selected'],
     default: 'applied',
   },
 }, { timestamps: true });
