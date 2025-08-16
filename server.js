@@ -8,26 +8,37 @@ dotenv.config();
 
 const jobRoutes = require('./routes/jobRoutes');
 const userRoutes = require("./routes/userRoutes");
+
 const authRoutes = require("./auth/authRoutes");
 const applications = require('./routes/applications'); // ✅ Use only this one
 const notificationRoutes = require("./routes/notificationRoutes");
+
+const authRoutes = require("./routes/authRoutes");
+
+
 
 const app = express(); 
 const PORT = process.env.PORT || 5002;
 
 app.use(cors()); 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/jobs', jobRoutes);
+
 app.use('/api/applications', applications); // ✅ Use once only
 app.use("/api/notifications", notificationRoutes);
+
+
+
 
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use("/api/users", userRoutes);     
 app.use("/api/auth", authRoutes); 
 
-
+const resetRoutes = require("./routes/resetRoutes");
+app.use("/api/auth", resetRoutes);
 
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
