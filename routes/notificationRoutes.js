@@ -8,7 +8,7 @@ router.get("/:userId/unread-count", verifyToken, async (req, res) => {
   try {
     const count = await Notification.countDocuments({ 
       user: req.params.userId, 
-      isRead: false 
+      read: false 
     });
     res.json({ count });
   } catch (err) {
@@ -30,7 +30,7 @@ router.get("/:userId", verifyToken, async (req, res) => {
 // 📌 Mark all as read
 router.put("/:userId/mark-read", verifyToken, async (req, res) => {
   try {
-    await Notification.updateMany({ user: req.params.userId }, { $set: { isRead: true } });
+    await Notification.updateMany({ user: req.params.userId }, { $set: { read: true } });
     res.json({ message: "Notifications marked as read" });
   } catch (err) {
     res.status(500).json({ error: err.message });
