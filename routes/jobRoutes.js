@@ -55,7 +55,7 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// ✅ Update job by ID
+
 router.put('/update/:id', async (req, res) => {
   try {
     const { title, company, location, jobType, salary, description } = req.body;
@@ -90,7 +90,7 @@ router.put('/update/:id', async (req, res) => {
   }
 });
 
-// ✅ Delete job by ID
+
 router.delete('/delete/:id', async (req, res) => {
   try {
     const deletedJob = await Job.findByIdAndDelete(req.params.id);
@@ -107,7 +107,7 @@ router.delete('/delete/:id', async (req, res) => {
 
 
 module.exports = router;
-// ✅ Get All Jobs with Filters and Pagination
+
 router.get('/', async (req, res) => {
   try {
     const {
@@ -121,7 +121,7 @@ router.get('/', async (req, res) => {
 
     const filters = {};
 
-    // Apply filters
+    
     if (jobType) filters.jobType = jobType;
     if (location) filters.location = new RegExp(location, 'i');
     if (company) filters.company = new RegExp(company, 'i');
@@ -178,7 +178,7 @@ router.post('/apply/:jobId', upload.single('resume'), async (req, res) => {
     res.status(500).json({ error: 'Server error while uploading resume' });
   }
 });
-// ✅ Bulk delete jobs by IDs
+
 router.post('/delete-multiple', async (req, res) => {
   try {
     const { ids } = req.body;
