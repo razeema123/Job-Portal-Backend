@@ -9,11 +9,21 @@ dotenv.config();
 // Routes
 const jobRoutes = require('./routes/jobRoutes');
 const userRoutes = require("./routes/userRoutes");
+
 const applications = require('./routes/applications');
 const notificationRoutes = require("./routes/notificationRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require('./routes/admin'); 
 const resetRoutes = require("./routes/resetRoutes");
+
+
+const authRoutes = require("./routes/authRoutes");
+const applications = require('./routes/applications'); 
+const notificationRoutes = require("./routes/notificationRoutes");
+
+
+
+
 
 const app = express(); 
 const PORT = process.env.PORT || 5002;
@@ -24,6 +34,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API routes
 app.use('/api/jobs', jobRoutes);
+
 app.use('/api/applications', applications); 
 app.use("/api/notifications", notificationRoutes);
 
