@@ -22,26 +22,52 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-/* -------------------- PROFILE ROUTES (MUST BE ABOVE :id ROUTES) -------------------- */
 
 
-      const token = jwt.sign(
-      { id: user._id, role: user.role },
+
+     
+router.post("/register", async (req, res) => {
+  try {
+    const { name, email, password } = req.body;
+
+   
+    let existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already registered" });
+    }
+
+   
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+  
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+    });
+    await newUser.save();
+
+    // Create token
+    const token = jwt.sign(
+      { id: newUser._id, role: newUser.role },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
 
-   
     res.status(201).json({
       message: "User registered successfully",
       token,
       user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role
-      }
+        id: newUser._id,
+        name: newUser.name,
+        email: newUser.email,
+        role: newUser.role,
+      },
     });
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 
 // GET logged-in user's profile
@@ -58,53 +84,67 @@ router.get("/profile", verifyToken, async (req, res) => {
 
 
 
+// LOGIN route
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
-// UPDATE logged-in user's profile
-router.put("/profile", verifyToken, validate(userSchema), async (req, res) => {
-
   try {
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user.id,
-      { $set: req.body },
-      { new: true }
-    ).select("-password");
-    if (!updatedUser)
-      return res.status(404).json({ error: "Profile not found" });
-    res.json(updatedUser);
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ error: "Invalid credentials" });
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ error: "Invalid credentials" });
+
+    const token = jwt.sign(
+      { id: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.json({
+      message: "Login successful",
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      },
+    });
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
-});
+});   // 👈 properly closed now
 
 
-// UPLOAD resume for logged-in user
-router.post(
-  "/profile/upload-resume",
-  verifyToken,
-  upload.single("resume"),
-  async (req, res) => {
-    try {
-      if (!req.file)
-        return res.status(400).json({ error: "No file uploaded" });
 
-      const updatedUser = await User.findByIdAndUpdate(
-        req.user.id,
-        { resumePath: `${req.protocol}://${req.get("host")}/uploads/resumes/${req.file.filename}`
- },
-        { new: true }
-      ).select("-password");
+  // UPLOAD resume for logged-in user
+  router.post(
+    "/profile/upload-resume",
+    verifyToken,
+    upload.single("resume"),
+    async (req, res) => {
+      try {
+        if (!req.file)
+          return res.status(400).json({ error: "No file uploaded" });
 
-      res.json({
-        message: "Resume uploaded successfully",
-        user: updatedUser,
-      });
-    } catch (err) {
-      res.status(500).json({ error: "Server error" });
+        const updatedUser = await User.findByIdAndUpdate(
+          req.user.id,
+          {
+            resumePath: `${req.protocol}://${req.get("host")}/uploads/resumes/${req.file.filename}`
+          },
+          { new: true }
+        ).select("-password");
+
+        res.json({
+          message: "Resume uploaded successfully",
+          user: updatedUser,
+        });
+      } catch (err) {
+        res.status(500).json({ error: "Server error" });
+      }
     }
-  }
-);
+  );
 
 /* -------------------- USER ID BASED ROUTES -------------------- */
 

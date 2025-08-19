@@ -9,11 +9,11 @@ dotenv.config();
 const jobRoutes = require('./routes/jobRoutes');
 const userRoutes = require("./routes/userRoutes");
 
-const authRoutes = require("./auth/authRoutes");
-const applications = require('./routes/applications'); // ✅ Use only this one
+const authRoutes = require("./routes/authRoutes");
+const applications = require('./routes/applications'); 
 const notificationRoutes = require("./routes/notificationRoutes");
 
-const authRoutes = require("./routes/authRoutes");
+
 
 
 
@@ -26,7 +26,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/jobs', jobRoutes);
 
-app.use('/api/applications', applications); // ✅ Use once only
+app.use('/api/applications', applications); 
 app.use("/api/notifications", notificationRoutes);
 
 
