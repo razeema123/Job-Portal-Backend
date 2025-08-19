@@ -1,8 +1,15 @@
 const Joi = require("joi");
 
+
+
+const baseSchema = {
+  name: Joi.string().trim().messages({
+
+
 // Signup schema
 const signupSchema = Joi.object({
   name: Joi.string().trim().required().messages({
+
     "string.empty": "Name is required"
   }),
   email: Joi.string().email().required().messages({

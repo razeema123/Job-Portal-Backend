@@ -79,14 +79,6 @@ router.post('/reset-password', async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // // Check OTP verification & expiry
-    // if (!user.otpVerified) {
-    //   return res.status(400).json({ message: 'OTP not verified' });
-    // }
-    // if (!user.resetOTP || user.resetOTPExpiry < Date.now()) {
-    //   return res.status(400).json({ message: 'OTP expired' });
-    // }
-
     // Hash and update password
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     user.password = hashedPassword;

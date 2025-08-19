@@ -6,8 +6,16 @@ const path = require('path');
 
 dotenv.config();
 
+// Routes
 const jobRoutes = require('./routes/jobRoutes');
 const userRoutes = require("./routes/userRoutes");
+
+const applications = require('./routes/applications');
+const notificationRoutes = require("./routes/notificationRoutes");
+const authRoutes = require("./routes/authRoutes");
+const adminRoutes = require('./routes/admin'); 
+const resetRoutes = require("./routes/resetRoutes");
+
 
 const authRoutes = require("./routes/authRoutes");
 const applications = require('./routes/applications'); 
@@ -24,22 +32,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// API routes
 app.use('/api/jobs', jobRoutes);
 
 app.use('/api/applications', applications); 
 app.use("/api/notifications", notificationRoutes);
 
-
-
-
-
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
-app.use("/api/users", userRoutes);     
+app.use('/api/admin', adminRoutes);   // ✅ mount admin routes separately
+app.use('/api/users', userRoutes);     
 app.use("/api/auth", authRoutes); 
-
-const resetRoutes = require("./routes/resetRoutes");
 app.use("/api/auth", resetRoutes);
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Database
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log('MongoDB connected');
@@ -49,8 +55,10 @@ mongoose.connect(process.env.MONGO_URI)
     console.error('MongoDB connection error:', err.message);
   });
 
+// Default route
 app.get('/', (_req, res) => res.send('Job Application API'));
 
+// Error handlers
 app.use((err, _req, res, _next) => {
   console.error('Global Error:', err.stack);
   res.status(500).json({ error: 'Something went wrong!' });
@@ -59,4 +67,3 @@ app.use((err, _req, res, _next) => {
   console.error("Global Error:", err);
   res.status(500).json({ error: err.message, stack: err.stack });
 });
-

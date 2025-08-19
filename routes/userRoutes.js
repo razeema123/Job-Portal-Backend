@@ -24,7 +24,6 @@ const upload = multer({ storage });
 
 
 
-
      
 router.post("/register", async (req, res) => {
   try {
@@ -70,17 +69,21 @@ router.post("/register", async (req, res) => {
 });
 
 
+
 // GET logged-in user's profile
 router.get("/profile", verifyToken, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
     if (!user) return res.status(404).json({ error: "Profile not found" });
     res.json(user);
-
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
 });
+
+
+// UPDATE logged-in user's profile
+router.put("/profile", verifyToken, validate(userSchema), async (req, res) => {
 
 
 
@@ -114,6 +117,33 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Server error" });
   }
+
+});
+
+// UPLOAD resume for logged-in user
+router.post(
+  "/profile/upload-resume",
+  verifyToken,
+  upload.single("resume"),
+  async (req, res) => {
+    try {
+      if (!req.file)
+        return res.status(400).json({ error: "No file uploaded" });
+
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user.id,
+        { resumePath: `${req.protocol}://${req.get("host")}/uploads/resumes/${req.file.filename}`
+ },
+        { new: true }
+      ).select("-password");
+
+      res.json({
+        message: "Resume uploaded successfully",
+        user: updatedUser,
+      });
+    } catch (err) {
+      res.status(500).json({ error: "Server error" });
+
 });   // 👈 properly closed now
 
 
@@ -148,7 +178,7 @@ router.post("/login", async (req, res) => {
 
 /* -------------------- USER ID BASED ROUTES -------------------- */
 
-
+// GET user by ID
 router.get("/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -163,7 +193,7 @@ router.get("/:id", verifyToken, async (req, res) => {
   }
 });
 
-
+// UPDATE user by ID
 router.put("/:id", verifyToken, validate(userSchema), async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -182,7 +212,7 @@ router.put("/:id", verifyToken, validate(userSchema), async (req, res) => {
   }
 });
 
-
+// DELETE user by ID
 router.delete("/:id", verifyToken, async (req, res) => {
   const { id } = req.params;
   if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -197,4 +227,12 @@ router.delete("/:id", verifyToken, async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const users = await User.find();
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 module.exports = router;
