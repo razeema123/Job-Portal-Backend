@@ -6,21 +6,19 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
 
   role: { type: String, enum:["admin", "recruiter", "user"], default: "user" },
+  isBlocked: { type: Boolean, default: false },
   resetOTP: String,
-  resetOTPExpiry: Date
-});
-
+  resetOTPExpiry: Date,
   
 
-// New profile fields
-title: { type: String },
-phone: { type: String },
-education: { type: String },
-experience: { type: String },
-skills: { type: [String], default: [] },
-about: { type: String },
-resumePath: { type: String }
-
+  // New profile fields
+  title: { type: String },
+  phone: { type: String },
+  education: { type: String },
+  experience: { type: String },
+  skills: { type: [String], default: [] },
+  about: { type: String },
+  resumePath: { type: String }
 }, { strict: true });
 
 

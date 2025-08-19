@@ -20,4 +20,18 @@ router.get("/users", verifyToken, authorizeRoles("admin"), async (req, res) => {
   }
 });
 
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+
+  if (!user) {
+    return res.status(400).json({ message: 'Invalid credentials' });
+  }
+
+  // ✅ Block check
+  if (user.isBlocked) {
+    return res.status(403).json({ message: 'Your account is blocked. Contact support.' });
+  }
+});
+
 module.exports = router;
