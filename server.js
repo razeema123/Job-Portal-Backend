@@ -10,14 +10,10 @@ dotenv.config();
 const jobRoutes = require('./routes/jobRoutes');
 const userRoutes = require("./routes/userRoutes");
 
-const applications = require('./routes/applications');
-const notificationRoutes = require("./routes/notificationRoutes");
 const authRoutes = require("./routes/authRoutes");
 const adminRoutes = require('./routes/admin'); 
 const resetRoutes = require("./routes/resetRoutes");
 
-
-const authRoutes = require("./routes/authRoutes");
 const applications = require('./routes/applications'); 
 const notificationRoutes = require("./routes/notificationRoutes");
 
