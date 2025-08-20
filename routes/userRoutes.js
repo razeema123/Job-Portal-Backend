@@ -84,6 +84,18 @@ router.get("/profile", verifyToken, async (req, res) => {
 
 // UPDATE logged-in user's profile
 router.put("/profile", verifyToken, validate(userSchema), async (req, res) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user.id,
+      { $set: req.body },
+      { new: true }
+    ).select("-password");
+    if (!updatedUser) return res.status(404).json({ error: "Profile not found" });
+    res.json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 
 
@@ -143,8 +155,9 @@ router.post(
       });
     } catch (err) {
       res.status(500).json({ error: "Server error" });
-
-});   // 👈 properly closed now
+    }
+  }
+);
 
 
 
