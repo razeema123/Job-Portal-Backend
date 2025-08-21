@@ -2,8 +2,7 @@ const Joi = require("joi");
 
 
 
-const baseSchema = {
-  name: Joi.string().trim().messages({
+// Removed incomplete baseSchema definition
 
 
 // Signup schema
