@@ -47,15 +47,24 @@ exports.signup = async (req, res) => {
 };
 
 // LOGIN
-exports.login = async (req, res) => {
+ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(401).json({ error: "Invalid email or password" });
+    if (!user) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
+
+    // 🚨 Blocked user check
+    if (user.isBlocked) {
+      return res.status(403).json({ message: "Your account is blocked. Contact admin." });
+    }
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ error: "Invalid email or password" });
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password" });
+    }
 
     const token = generateToken(user);
 
@@ -66,10 +75,13 @@ exports.login = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        isBlocked: user.isBlocked   // ✅ include this
       }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ message: err.message });
   }
 };
+
+

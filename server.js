@@ -21,6 +21,8 @@ const notificationRoutes = require("./routes/notificationRoutes");
 
 
 
+
+
 const app = express(); 
 const PORT = process.env.PORT || 5002;
 
@@ -29,12 +31,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API routes
-app.use('/api/jobs', jobRoutes);
+ 
+
 
 app.use('/api/applications', applications); 
 app.use("/api/notifications", notificationRoutes);
 
-app.use('/api/admin', adminRoutes);   // ✅ mount admin routes separately
+app.use('/api/admin', adminRoutes);  
 app.use('/api/users', userRoutes);     
 app.use("/api/auth", authRoutes); 
 app.use("/api/auth", resetRoutes);

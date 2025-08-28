@@ -8,8 +8,7 @@ const User = require("../models/User");
 
 router.post("/signup", validate(signupSchema), signup);
 
-router.post("/login", validate(loginSchema), login);
-
+ 
 
 router.get("/users", verifyToken, authorizeRoles("admin"), async (req, res) => {
   try {
